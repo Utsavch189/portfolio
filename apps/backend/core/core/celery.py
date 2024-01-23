@@ -6,6 +6,8 @@ from django.conf import settings
 """
 celery -A core.celery worker --pool=solo -l info [for celery worker]
 
+celery -A core.celery worker --detach  --pool=solo -l info [in daemon mode]
+
 """
 # celery main config
 

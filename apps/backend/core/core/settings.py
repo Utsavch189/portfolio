@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-import datetime
+import datetime,os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -99,6 +99,10 @@ DATABASES = {
             'charset': 'utf8mb4',
             "autocommit": True,
         }
+    },
+    'broker': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "broker.sqlite3",
     }
 }
 
@@ -140,7 +144,11 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER='officail@utsavchatterjee.me'
 EMAIL_HOST_PASSWORD= 'utsav@2001'
 
-CELERY_BROKER_URL='redis://default:Hb5l2ZpMFAEKug22yzIEvo12KxVpSqTF@redis-16032.c274.us-east-1-3.ec2.cloud.redislabs.com:16032'
+#CELERY_BROKER_URL='redis://default:Hb5l2ZpMFAEKug22yzIEvo12KxVpSqTF@redis-16032.c274.us-east-1-3.ec2.cloud.redislabs.com:16032'
+"""
+To use sqllite as a message broker we need to install pip install sqlalchemy
+"""
+CELERY_BROKER_URL = 'sqla+sqlite:///{}'.format(os.path.join(BASE_DIR, 'broker.sqlite3'))
 CELERY_ACCEPT_CONTENT=['application/json']
 CELERY_TASK_SERIALIZER='json'
 CELERY_TIMEZONE='Asia/Kolkata'
@@ -155,7 +163,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-CORS_ORIGIN_ALLOW_ALL=False
+CORS_ORIGIN_ALLOW_ALL=True
 APPEND_SLASH=True
 
 LOGGING ={
