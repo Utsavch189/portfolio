@@ -144,11 +144,11 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER='officail@utsavchatterjee.me'
 EMAIL_HOST_PASSWORD= 'utsav@2001'
 
-#CELERY_BROKER_URL='redis://default:Hb5l2ZpMFAEKug22yzIEvo12KxVpSqTF@redis-16032.c274.us-east-1-3.ec2.cloud.redislabs.com:16032'
+CELERY_BROKER_URL='redis://default:Hb5l2ZpMFAEKug22yzIEvo12KxVpSqTF@redis-16032.c274.us-east-1-3.ec2.cloud.redislabs.com:16032'
 """
 To use sqllite as a message broker we need to install pip install sqlalchemy
 """
-CELERY_BROKER_URL = 'sqla+sqlite:///{}'.format(os.path.join(BASE_DIR, 'broker.sqlite3'))
+#CELERY_BROKER_URL = 'sqla+sqlite:///{}'.format(os.path.join(BASE_DIR, 'broker.sqlite3'))
 CELERY_ACCEPT_CONTENT=['application/json']
 CELERY_TASK_SERIALIZER='json'
 CELERY_TIMEZONE='Asia/Kolkata'

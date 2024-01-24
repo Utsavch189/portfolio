@@ -6,6 +6,7 @@ from utils.emails.main import SendEmail
 from django.utils import timezone
 from celery import shared_task
 from benedict import benedict
+from threading import Thread
 
 class EmailService:
 
@@ -33,7 +34,7 @@ class EmailService:
 
     @staticmethod
     @shared_task
-    def task(validated_data:EmailSerializerForInput):
+    def celery_task(validated_data:EmailSerializerForInput):
         validated_data=benedict(validated_data)
         try:
             EmailService.send_mail(validated_data)
@@ -41,6 +42,29 @@ class EmailService:
             return "Done"
         except Exception as e:
 
+            mail_sender=validated_data.sent_mail
+            subject="Failed!"
+            body="Mail Sending is failed due some errors!"
+            mail_receiver=validated_data.sent_mail
+
+            mail=SendEmail(
+            subject=subject,
+            body=body,
+            mail_sender=mail_sender,
+            mail_receiver=mail_receiver
+            )
+            mail.send()
+            return "Mail Failed"
+    
+    @staticmethod
+    def thread_task(validated_data:EmailSerializerForInput):
+        validated_data=benedict(validated_data)
+        try:
+            EmailService.send_mail(validated_data)
+            EmailService.save_mail_record(validated_data)
+            return "Done"
+        except Exception as e:
+        
             mail_sender=validated_data.sent_mail
             subject="Failed!"
             body="Mail Sending is failed due some errors!"
@@ -68,7 +92,9 @@ class EmailService:
             serializer=EmailSerializerForInput(data=data)
             if serializer.is_valid():
                 validated_data=serializer.validated_data
-                EmailService.task.delay(validated_data)
+                #EmailService.celery_task.delay(validated_data)
+                t=Thread(target=EmailService.thread_task,args=[validated_data])
+                t.start()
                 return
             else:
                 raise Exception(serializer.errors)
